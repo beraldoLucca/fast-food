@@ -1,0 +1,38 @@
+version: '3.9'
+
+volumes:
+  postgres-data:
+
+services:
+  postgres:
+    image: postgres:15.1-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: my-db
+    networks:
+      - app-network
+
+
+  fast-food:
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my-db
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
