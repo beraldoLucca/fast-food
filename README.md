@@ -9,7 +9,6 @@ O projeto gerencia o fluxo de pedidos de uma lanchonete.
 - [Uso](#uso)
 - [Endpoints de Testes](#endpoints-de-testes)
 - [Autores e Reconhecimentos](#autores-e-reconhecimentos)
-- [Recursos Adicionais](#recursos-adicionais)
 
 ## Descrição
 
