@@ -9,8 +9,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +55,7 @@ public class CustomerController {
     @GetMapping("/customer")
     @Operation(summary = "Listar todos os Clientes")
     public ResponseEntity<List<Customer>> findAll() {
-        log.info("get all");
+        log.info("Listando todos os clientes");
         return ResponseEntity.ok(customerUsecase.findAll());
     }
 }

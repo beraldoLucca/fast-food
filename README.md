@@ -12,11 +12,15 @@ O projeto gerencia o fluxo de pedidos de uma lanchonete.
 
 ## Descrição
 
+O projeto tem por objetivo ajudar uma lanchonete em processo de expansão, 
+provendo um sistema de autoatendimento de fast-food.
+
 O projeto consegue cadastrar novos clientes(a partir do seu CPF, nome e email),
 e identificar um cliente a partir do seu CPF.
 Consegue também criar, editar e remover produtos, além de buscar um produto
 atraveś de uma categoria específica.
-O projeto possui o fake checkout, um endpoint que finaliza os pedidos.
+O projeto possui um endpoint para criar um novo pedido e o fake checkout,
+um endpoint que finaliza os pedidos.
 É possível também listar todos os pedidos.
 
 ## Instalação e Uso
@@ -30,11 +34,14 @@ git clone https://github.com/beraldoLucca/fast-food.git
 # Navegue até o diretório do projeto
 cd fast-food
 
-# Suba o arquivo docker-compose para rodar a aplicação
+# Execute o comando abaixo para rodar a aplicação:
 docker-compose up --build
 
-# Depois da aplicação estar rodando, acesse a URL do Swagger
+# Depois da aplicação estar rodando, acesse a URL do Swagger:
 http://localhost:8080/api
+
+# Para ver o documento de open-api, acesse a URL:
+http://localhost:8080/api-docs
 ```
 
 ## Endpoints de Testes

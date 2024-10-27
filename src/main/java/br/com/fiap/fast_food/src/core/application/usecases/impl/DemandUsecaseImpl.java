@@ -44,6 +44,7 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     @Override
     @Transactional
     public void save(DemandRequest request) {
+        request.setStatus(DemandStatus.RECEBIDO);
         Customer customer = setCustomer(request);
         validateProducts(request);
         List<Product> productList = setProducts(request);

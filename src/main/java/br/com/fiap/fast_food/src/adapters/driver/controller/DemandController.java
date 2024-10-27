@@ -40,7 +40,6 @@ public class DemandController {
                     content = @Content)})
     public ResponseEntity<String> saveDemand(@RequestBody DemandRequest demandRequest) {
         log.info("Solicitando um pedido: {}", demandRequest);
-        demandRequest.setStatus(DemandStatus.RECEBIDO);
         demandUsecase.save(demandRequest);
         return ResponseEntity.ok().body("Pedido solicitado com sucesso!");
     }
