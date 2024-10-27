@@ -4,6 +4,7 @@ import br.com.fiap.fast_food.src.adapters.driver.dto.DemandRequest;
 import br.com.fiap.fast_food.src.core.domain.entities.Customer;
 import br.com.fiap.fast_food.src.core.domain.entities.Demand;
 import br.com.fiap.fast_food.src.core.domain.entities.Product;
+import br.com.fiap.fast_food.src.core.domain.enums.DemandStatus;
 import br.com.fiap.fast_food.src.core.domain.vo.Cpf;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -15,7 +16,7 @@ public interface IDemandMapper {
 
     IDemandMapper INSTANCE = Mappers.getMapper(IDemandMapper.class);
 
-    Demand toEntity(DemandRequest request, List<Product> products, Customer customer);
+    Demand toEntity(DemandRequest request, List<Product> products, Customer customer, Double time, DemandStatus status);
 
     Cpf map(String value);
 

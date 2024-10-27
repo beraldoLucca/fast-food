@@ -14,6 +14,4 @@ public class DemandRequest {
 
     private CustomerRequest customer;
     private List<Long> productsId;
-    private Double time;
-    private DemandStatus status;
 }

@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class DemandUsecaseImpl implements IDemandUsecase {
@@ -44,11 +45,13 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     @Override
     @Transactional
     public void save(DemandRequest request) {
-        request.setStatus(DemandStatus.RECEBIDO);
+        var timeRandom = ThreadLocalRandom.current().nextDouble(1.0, 15.0);
+        var time = Math.round(timeRandom * 10.0) / 10.0;
+        var demandStatus = DemandStatus.RECEBIDO;
         Customer customer = setCustomer(request);
         validateProducts(request);
         List<Product> productList = setProducts(request);
-        var demand = demandMapper.toEntity(request, productList, customer);
+        var demand = demandMapper.toEntity(request, productList, customer, time, demandStatus);
         demandRepository.save(demand);
     }
 
