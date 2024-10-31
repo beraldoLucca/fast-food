@@ -9,14 +9,17 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@Validated
 @Slf4j
 public class ProductController {
 
@@ -33,8 +36,8 @@ public class ProductController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductRequest.class)) }),
             @ApiResponse(responseCode = "400", description = "Categoria inválida",
-                    content = @Content)})
-    public ResponseEntity<String> saveProduct(@RequestBody ProductRequest product) {
+                    content = @Content(mediaType = "text/plain"))})
+    public ResponseEntity<String> saveProduct(@Valid @RequestBody ProductRequest product) {
         log.info("Cadastrando novo produto: {}", product);
         productUsecase.save(product);
         return ResponseEntity.ok("Produto cadastrado com sucesso!");

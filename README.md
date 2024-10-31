@@ -122,12 +122,9 @@ Aqui estão os endpoints da API que você pode usar para testar as funcionalidad
   "cpf":"12345678910",
   "name": "Fiap da silva",
   "email":"fiap@gmail.com"
-  },
-- 
-    {"productsId": [1,2],
-    "time": 15},
-    {"productsId": [3,4],
-    "time": 13}
+  }, {"productsId": [1,2]},
+-
+    {"productsId": [3,4]}
     - #### Resposta:
             Pedido solicitado com sucesso!
 

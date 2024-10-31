@@ -8,12 +8,14 @@ import br.com.fiap.fast_food.src.core.domain.entities.Product;
 import br.com.fiap.fast_food.src.core.domain.enums.Category;
 import br.com.fiap.fast_food.src.core.domain.exception.ValidationException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ProductUsecaseImpl implements IProductUsecase {
 
     private final IProductRepository productRepository;
