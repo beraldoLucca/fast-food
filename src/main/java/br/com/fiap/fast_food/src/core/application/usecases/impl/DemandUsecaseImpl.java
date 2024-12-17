@@ -21,6 +21,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class DemandUsecaseImpl implements IDemandUsecase {
         var preparationTime = Math.round(timeRandom * 10.0) / 10.0;
         var demandStatus = DemandStatus.RECEBIDO;
         var paymentStatus = PaymentStatus.EM_ANDAMENTO;
-        var createdAt = Instant.now();
+        var createdAt = LocalTime.now();
         Customer customer = setCustomer(request);
         validateProducts(request);
         List<Product> productList = setProducts(request);
