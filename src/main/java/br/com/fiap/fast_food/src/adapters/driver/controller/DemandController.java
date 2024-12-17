@@ -12,10 +12,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -54,7 +58,7 @@ public class DemandController {
     public ResponseEntity<String> finalizeDemand(@PathVariable("id") Long id) {
         log.info("Finalizando um pedido {}", id);
         demandUsecase.finalizeDemand(id);
-        return ResponseEntity.ok().body("Pedido finalizado com sucesso!");
+        return ResponseEntity.ok().body("Pedido: " + id + " finalizado com sucesso!");
     }
 
     @GetMapping("/demands")
@@ -62,8 +66,31 @@ public class DemandController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pedido listados com sucesso",
                     content = { @Content(mediaType = "application/json") })})
-    public ResponseEntity<List<DemandResponse>> getAllDemands(){
+    public ResponseEntity<List<DemandResponse>> findAllDemands(){
         log.info("Listando todos os pedidos.");
-        return ResponseEntity.ok(demandUsecase.getAll());
+        return ResponseEntity.ok(demandUsecase.findAll());
+    }
+
+    @GetMapping("/demand/{id}")
+    @Operation(summary = "Consultando status de pagamento do pedido.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pedido listado com sucesso",
+                    content = { @Content(mediaType = "application/json") })})
+    public ResponseEntity<String> findDemandPaymentStatus(@PathVariable("id") Long id) {
+        log.info("Verificando status de pagamento do pedido. {}", id);
+        var demand = demandUsecase.findById(id);
+        return ResponseEntity.ok().body("Pedido: " + id + ", status de pagamento: " + demand.getPaymentStatus());
+    }
+
+    @PostMapping("/demand/webhook/payment")
+    @Operation(summary = "Webhook para confirmação de pagamento")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pedido com pagamento aprovado",
+                    content = { @Content(mediaType = "application/json") })})
+    public ResponseEntity<String> handleWebhook(@RequestBody Map<String, Object> payload,
+                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String signatureHeader) throws NoSuchAlgorithmException, InvalidKeyException {
+        log.info("Pagando o pedido...");
+        demandUsecase.processPayment(payload, signatureHeader);
+        return ResponseEntity.ok().body("Pagamento aprovado com sucesso.");
     }
 }

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-fast-food-deployment
+  labels:
+    app: api-fast-food-deployment
+spec:
+  template:
+    metadata:
+      labels:
+        app: api-fast-food-deployment
+    spec:
+      containers:
+        - name: c-fast-food
+          image: beraldolucca/fast-food:v1
+          ports:
+            - containerPort: 80
+          env:
+            - name: POSTGRES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: POSTGRES_URL
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-opaque
+                  key: POSTGRES_PASSWORD
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /
+            periodSeconds: 30
+            failureThreshold: 3
+            initialDelaySeconds: 20
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /
+            periodSeconds: 30
+            failureThreshold: 5
+            initialDelaySeconds: 10
+          resources:
+            requests:
+              cpu: 1m
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-fast-food-deployment

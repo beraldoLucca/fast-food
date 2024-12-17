@@ -34,6 +34,9 @@ git clone https://github.com/beraldoLucca/fast-food.git
 # Navegue até o diretório do projeto
 cd fast-food
 
+# Empacote o projeto, usando o comando abaixo, para que seja gerado a versão:
+mvn package
+
 # Execute o comando abaixo para rodar a aplicação:
 docker-compose up --build
 

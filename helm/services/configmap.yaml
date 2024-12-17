@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+data:
+  POSTGRES_URL: "postgres:// ELB do svc que a gente subir na AWS"
+  POSTGRES_USER: "admin"

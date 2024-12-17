@@ -1,6 +1,7 @@
 package br.com.fiap.fast_food.src.core.domain.entities;
 
 import br.com.fiap.fast_food.src.core.domain.enums.DemandStatus;
+import br.com.fiap.fast_food.src.core.domain.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,4 +39,8 @@ public class Demand {
     @Enumerated(EnumType.STRING)
     @Column
     private DemandStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private PaymentStatus paymentStatus;
 }
