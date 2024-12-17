@@ -14,14 +14,13 @@ import br.com.fiap.fast_food.src.core.domain.enums.DemandStatus;
 import br.com.fiap.fast_food.src.core.domain.enums.PaymentStatus;
 import br.com.fiap.fast_food.src.core.domain.exception.ValidationException;
 import jakarta.transaction.Transactional;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -55,13 +54,14 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     @Transactional
     public void save(DemandRequest request) {
         var timeRandom = ThreadLocalRandom.current().nextDouble(1.0, 15.0);
-        var time = Math.round(timeRandom * 10.0) / 10.0;
+        var preparationTime = Math.round(timeRandom * 10.0) / 10.0;
         var demandStatus = DemandStatus.RECEBIDO;
         var paymentStatus = PaymentStatus.EM_ANDAMENTO;
+        var createdAt = Instant.now();
         Customer customer = setCustomer(request);
         validateProducts(request);
         List<Product> productList = setProducts(request);
-        var demand = demandMapper.toEntity(request, productList, customer, time, demandStatus, paymentStatus);
+        var demand = demandMapper.toEntity(request, productList, customer, preparationTime, demandStatus, paymentStatus, createdAt);
         demandRepository.save(demand);
     }
 
@@ -77,7 +77,8 @@ public class DemandUsecaseImpl implements IDemandUsecase {
 
     @Override
     public List<DemandResponse> findAll() {
-        var demandList = demandRepository.findAll();
+//        var demandList = demandRepository.findAll();
+        var demandList = demandRepository.findAllDemandsInOrder(DemandStatus.FINALIZADO, DemandStatus.PRONTO, DemandStatus.EM_PREPARACAO, DemandStatus.RECEBIDO);
         return demandList.stream().map(demand -> DemandResponse.of(demand, productMapper.toProductResponses(demand.getProducts()))).toList();
     }
 
@@ -93,7 +94,18 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     @Override
     public void processPayment(Map<String, Object> payload, String signatureHeader) throws NoSuchAlgorithmException, InvalidKeyException {
         validateSignature(signatureHeader, payload);
-        
+
+        String evento = (String) payload.get("event");
+        Map<String, Object> data = (Map<String, Object>) payload.get("data");
+
+        if ("payment_approved".equals(evento)) {
+            Long demandId = (Long) data.get("order_id");
+            demandRepository.updatePaymentStatus(demandId, PaymentStatus.APROVADO);
+        } else if ("payment_failed".equals(evento)) {
+            throw new ValidationException("Pagamento falhou");
+        } else {
+            throw new ValidationException("Evento desconhecido: " + evento);
+        }
     }
 
     private void validateSignature(String signatureHeader, Map<String, Object> payload) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -130,7 +142,11 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     }
 
     private List<Product> setProducts(DemandRequest request) {
-        return productUsecaseImpl.findAllById(request.getProductsId());
+        var products = productUsecaseImpl.findAllById(request.getProductsId());
+        if (products.isEmpty()) {
+            throw new ValidationException("Por favor, selecione um produto válido.");
+        }
+        return products;
     }
 
     private void validateProducts(DemandRequest request) {

@@ -10,6 +10,7 @@ import br.com.fiap.fast_food.src.core.domain.vo.Cpf;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.time.Instant;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -17,7 +18,7 @@ public interface IDemandMapper {
 
     IDemandMapper INSTANCE = Mappers.getMapper(IDemandMapper.class);
 
-    Demand toEntity(DemandRequest request, List<Product> products, Customer customer, Double time, DemandStatus status, PaymentStatus paymentStatus);
+    Demand toEntity(DemandRequest request, List<Product> products, Customer customer, Double preparationTime, DemandStatus status, PaymentStatus paymentStatus, Instant createdAt);
 
     Cpf map(String value);
 

@@ -71,7 +71,7 @@ public class DemandController {
         return ResponseEntity.ok(demandUsecase.findAll());
     }
 
-    @GetMapping("/demand/{id}")
+    @GetMapping("/demand/{id}/payment-status")
     @Operation(summary = "Consultando status de pagamento do pedido.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pedido listado com sucesso",

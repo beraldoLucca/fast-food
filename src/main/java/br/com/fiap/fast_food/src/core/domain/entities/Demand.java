@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -34,7 +35,10 @@ public class Demand {
     private List<Product> products;
 
     @Column
-    private Double time;
+    private Double preparationTime;
+
+    @Column
+    private Instant createdAt;
 
     @Enumerated(EnumType.STRING)
     @Column
