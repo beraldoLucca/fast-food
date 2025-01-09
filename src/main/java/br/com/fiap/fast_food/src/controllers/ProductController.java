@@ -2,7 +2,9 @@ package br.com.fiap.fast_food.src.controllers;
 
 import br.com.fiap.fast_food.src.dtos.ProductRequest;
 import br.com.fiap.fast_food.src.gateways.IProductGateway;
+import br.com.fiap.fast_food.src.gateways.impl.DemandGatewayImpl;
 import br.com.fiap.fast_food.src.gateways.impl.ProductGatewayImpl;
+import br.com.fiap.fast_food.src.repositories.IDemandRepository;
 import br.com.fiap.fast_food.src.repositories.IProductRepository;
 import br.com.fiap.fast_food.src.usecases.IProductUsecase;
 import br.com.fiap.fast_food.src.db.models.Product;
@@ -29,9 +31,12 @@ public class ProductController {
 
     private final IProductRepository productRepository;
 
-    public ProductController(IProductUsecase productUsecase, IProductRepository productRepository) {
+    private final IDemandRepository demandRepository;
+
+    public ProductController(IProductUsecase productUsecase, IProductRepository productRepository, IDemandRepository demandRepository) {
         this.productUsecase = productUsecase;
         this.productRepository = productRepository;
+        this.demandRepository = demandRepository;
     }
 
     @PostMapping("/product")
@@ -77,7 +82,8 @@ public class ProductController {
     public ResponseEntity<String> removeProduct(@PathVariable Integer id) {
         log.info("Removendo produto, id: {}", id);
         var gateway = new ProductGatewayImpl(productRepository);
-        productUsecase.remove(id, gateway);
+        var demandGateway = new DemandGatewayImpl(demandRepository);
+        productUsecase.remove(id, gateway, demandGateway);
         return ResponseEntity.ok("Produto excluido com sucesso!");
     }
 

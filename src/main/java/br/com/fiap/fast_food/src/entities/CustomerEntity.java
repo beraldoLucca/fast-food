@@ -3,9 +3,7 @@ package br.com.fiap.fast_food.src.entities;
 import br.com.fiap.fast_food.src.exceptions.ValidationException;
 import br.com.fiap.fast_food.src.vo.Cpf;
 import lombok.Getter;
-import lombok.Setter;
 
-@Setter
 @Getter
 public class CustomerEntity {
 

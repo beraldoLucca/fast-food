@@ -6,6 +6,7 @@ import br.com.fiap.fast_food.src.dtos.ProductRequest;
 import br.com.fiap.fast_food.src.entities.ProductEntity;
 import br.com.fiap.fast_food.src.enums.Category;
 import br.com.fiap.fast_food.src.exceptions.ValidationException;
+import br.com.fiap.fast_food.src.gateways.IDemandGateway;
 import br.com.fiap.fast_food.src.gateways.IProductGateway;
 import br.com.fiap.fast_food.src.repositories.IProductRepository;
 import br.com.fiap.fast_food.src.usecases.IProductUsecase;
@@ -49,14 +50,10 @@ public class ProductUsecaseImpl implements IProductUsecase {
 
     @Override
     @Transactional
-    public void remove(int id, IProductGateway gateway) {
-        var productFound = findById(id, gateway);
-        if(productFound.isEmpty()) {
-            throw new ValidationException("Produto não encontrado.");
-        }
-        else{
-            gateway.remove(productFound.get());
-        }
+    public void remove(int id, IProductGateway productGateway, IDemandGateway demandGateway) {
+        var product = validateProductExists(id, productGateway);
+        validateProductInDemand(product, demandGateway);
+        productGateway.remove(product);
     }
 
     @Override
@@ -70,6 +67,13 @@ public class ProductUsecaseImpl implements IProductUsecase {
         return gateway.findAllById(ids);
     }
 
+    @Override
+    public void validateProduct(List<Long> productIds) {
+        if(productIds == null || productIds.isEmpty()) {
+            throw new ValidationException("Por favor, selecione pelo menos um produto.");
+        }
+    }
+
     private Optional<Product> findById(long id, IProductGateway gateway) {
         return gateway.findById(id);
     }
@@ -77,5 +81,20 @@ public class ProductUsecaseImpl implements IProductUsecase {
     private ProductEntity getProductEntity(ProductRequest productRequest) {
         var category = Category.fromValue(productRequest.categoryId());
         return new ProductEntity(productRequest.name(), category, productRequest.price(), productRequest.description(), productRequest.image());
+    }
+
+    private void validateProductInDemand(Product product, IDemandGateway gateway) {
+        var demand = gateway.findDemandByProducts(List.of(product));
+        if(!demand.isEmpty()){
+            throw new ValidationException("A exlusão não pode ser concluída pois já existe um pedido atrelado a esse produto.");
+        }
+    }
+
+    private Product validateProductExists(int id, IProductGateway gateway) {
+        var productFound = findById(id, gateway);
+        if(productFound.isEmpty()) {
+            throw new ValidationException("Produto não encontrado.");
+        }
+        return productFound.get();
     }
 }

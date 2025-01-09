@@ -1,6 +1,7 @@
 package br.com.fiap.fast_food.src.gateways.impl;
 
 import br.com.fiap.fast_food.src.db.models.Demand;
+import br.com.fiap.fast_food.src.db.models.Product;
 import br.com.fiap.fast_food.src.enums.DemandStatus;
 import br.com.fiap.fast_food.src.enums.PaymentStatus;
 import br.com.fiap.fast_food.src.gateways.IDemandGateway;
@@ -41,5 +42,10 @@ public class DemandGatewayImpl implements IDemandGateway {
     @Override
     public List<Demand> findAllDemandsInOrder(DemandStatus statusFinalizado, DemandStatus statusPronto, DemandStatus statusEmPreparacao, DemandStatus statusRecebido) {
         return demandRepository.findAllDemandsInOrder(statusFinalizado, statusPronto, statusEmPreparacao, statusRecebido);
+    }
+
+    @Override
+    public List<Demand> findDemandByProducts(List<Product> products) {
+        return demandRepository.findDemandByProducts(products);
     }
 }

@@ -1,6 +1,7 @@
 package br.com.fiap.fast_food.src.gateways;
 
 import br.com.fiap.fast_food.src.db.models.Demand;
+import br.com.fiap.fast_food.src.db.models.Product;
 import br.com.fiap.fast_food.src.enums.DemandStatus;
 import br.com.fiap.fast_food.src.enums.PaymentStatus;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +25,6 @@ public interface IDemandGateway {
                                        DemandStatus statusPronto,
                                        DemandStatus statusEmPreparacao,
                                        DemandStatus statusRecebido);
+
+    List<Demand> findDemandByProducts(List<Product> products);
 }

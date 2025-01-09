@@ -59,7 +59,7 @@ public class CustomerController {
         return ResponseEntity.ok("Cliente validado com sucesso!");
     }
 
-    @GetMapping("/customer")
+    @GetMapping("/customers")
     @Operation(summary = "Listar todos os Clientes")
     public ResponseEntity<List<Customer>> findAll() {
         log.info("Listando todos os clientes");

@@ -7,6 +7,7 @@ import br.com.fiap.fast_food.src.db.models.Demand;
 import br.com.fiap.fast_food.src.db.models.Product;
 import br.com.fiap.fast_food.src.dtos.DemandRequest;
 import br.com.fiap.fast_food.src.dtos.DemandResponse;
+import br.com.fiap.fast_food.src.entities.DemandEntity;
 import br.com.fiap.fast_food.src.enums.DemandStatus;
 import br.com.fiap.fast_food.src.enums.PaymentStatus;
 import br.com.fiap.fast_food.src.exceptions.ValidationException;
@@ -53,15 +54,11 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     @Override
     @Transactional
     public void save(DemandRequest request, ICustomerGateway customerGateway, IProductGateway productGateway, IDemandGateway demandGateway) {
-        var timeRandom = ThreadLocalRandom.current().nextDouble(1.0, 15.0);
-        var preparationTime = Math.round(timeRandom * 10.0) / 10.0;
-        var demandStatus = DemandStatus.RECEBIDO;
-        var paymentStatus = PaymentStatus.EM_ANDAMENTO;
-        var createdAt = LocalTime.now();
         Customer customer = setCustomer(request, customerGateway);
         validateProducts(request);
         List<Product> productList = setProducts(request, productGateway);
-        var demand = demandAdapter.toEntity(request, productList, customer, preparationTime, demandStatus, paymentStatus, createdAt);
+        var entity = getEntity(customer, productList);
+        var demand = demandAdapter.toEntity(entity);
         demandGateway.save(demand);
     }
 
@@ -73,7 +70,7 @@ public class DemandUsecaseImpl implements IDemandUsecase {
             throw new ValidationException("Pedido não encontrado");
         }
         demand.setStatus(DemandStatus.FINALIZADO);
-        gateway.save(demandAdapter.updateToEntity(demand));
+        gateway.save(demand);
     }
 
     @Override
@@ -150,8 +147,15 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     }
 
     private void validateProducts(DemandRequest request) {
-        if(request.getProductsId() == null || request.getProductsId().isEmpty()){
-            throw new ValidationException("Por favor, selecione pelo menos um produto.");
-        }
+        productUsecase.validateProduct(request.getProductsId());
+    }
+
+    private DemandEntity getEntity(Customer customer, List<Product> productList) {
+        var timeRandom = ThreadLocalRandom.current().nextDouble(1.0, 15.0);
+        var preparationTime = Math.round(timeRandom * 10.0) / 10.0;
+        var demandStatus = DemandStatus.RECEBIDO;
+        var paymentStatus = PaymentStatus.EM_ANDAMENTO;
+        var createdAt = LocalTime.now();
+        return new DemandEntity(customer, productList, preparationTime, createdAt, demandStatus, paymentStatus);
     }
 }

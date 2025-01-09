@@ -2,14 +2,11 @@ package br.com.fiap.fast_food.src.entities;
 
 import br.com.fiap.fast_food.src.enums.Category;
 import br.com.fiap.fast_food.src.exceptions.ValidationException;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 
+@Getter
 public class ProductEntity {
 
     private String name;
