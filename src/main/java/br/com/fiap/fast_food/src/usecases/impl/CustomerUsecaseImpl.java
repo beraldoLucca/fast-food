@@ -1,13 +1,12 @@
 package br.com.fiap.fast_food.src.usecases.impl;
 
-import br.com.fiap.fast_food.src.dtos.CustomerRequest;
 import br.com.fiap.fast_food.src.adapters.ICustomerAdapter;
-import br.com.fiap.fast_food.src.entities.CustomerEntity;
-import br.com.fiap.fast_food.src.gateways.ICustomerGateway;
-import br.com.fiap.fast_food.src.repositories.ICustomerRepository;
-import br.com.fiap.fast_food.src.usecases.ICustomerUsecase;
 import br.com.fiap.fast_food.src.db.models.Customer;
+import br.com.fiap.fast_food.src.dtos.CustomerRequest;
+import br.com.fiap.fast_food.src.entities.CustomerEntity;
 import br.com.fiap.fast_food.src.exceptions.ValidationException;
+import br.com.fiap.fast_food.src.gateways.ICustomerGateway;
+import br.com.fiap.fast_food.src.usecases.ICustomerUsecase;
 import br.com.fiap.fast_food.src.vo.Cpf;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;

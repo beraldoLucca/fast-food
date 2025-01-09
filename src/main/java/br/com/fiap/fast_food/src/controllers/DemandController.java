@@ -2,10 +2,11 @@ package br.com.fiap.fast_food.src.controllers;
 
 import br.com.fiap.fast_food.src.dtos.DemandRequest;
 import br.com.fiap.fast_food.src.dtos.DemandResponse;
-import br.com.fiap.fast_food.src.gateways.ICustomerGateway;
 import br.com.fiap.fast_food.src.gateways.impl.CustomerGatewayImpl;
+import br.com.fiap.fast_food.src.gateways.impl.DemandGatewayImpl;
 import br.com.fiap.fast_food.src.gateways.impl.ProductGatewayImpl;
 import br.com.fiap.fast_food.src.repositories.ICustomerRepository;
+import br.com.fiap.fast_food.src.repositories.IDemandRepository;
 import br.com.fiap.fast_food.src.repositories.IProductRepository;
 import br.com.fiap.fast_food.src.usecases.IDemandUsecase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,10 +35,13 @@ public class DemandController {
 
     private final IProductRepository iProductRepository;
 
-    public DemandController(IDemandUsecase demandUsecase, ICustomerRepository iCustomerRepository, IProductRepository iProductRepository) {
+    private final IDemandRepository iDemandRepository;
+
+    public DemandController(IDemandUsecase demandUsecase, ICustomerRepository iCustomerRepository, IProductRepository iProductRepository, IDemandRepository iDemandRepository) {
         this.demandUsecase = demandUsecase;
         this.iCustomerRepository = iCustomerRepository;
         this.iProductRepository = iProductRepository;
+        this.iDemandRepository = iDemandRepository;
     }
 
     @PostMapping("/demand")
@@ -54,7 +58,8 @@ public class DemandController {
         log.info("Solicitando um pedido: {}", demandRequest);
         var customerGateway = new CustomerGatewayImpl(iCustomerRepository);
         var productGateway = new ProductGatewayImpl(iProductRepository);
-        demandUsecase.save(demandRequest, customerGateway, productGateway);
+        var demandGateway = new DemandGatewayImpl(iDemandRepository);
+        demandUsecase.save(demandRequest, customerGateway, productGateway, demandGateway);
         return ResponseEntity.ok().body("Pedido solicitado com sucesso!");
     }
 
@@ -67,7 +72,8 @@ public class DemandController {
                     content = @Content)})
     public ResponseEntity<String> finalizeDemand(@PathVariable("id") Long id) {
         log.info("Finalizando um pedido {}", id);
-        demandUsecase.finalizeDemand(id);
+        var demandGateway = new DemandGatewayImpl(iDemandRepository);
+        demandUsecase.finalizeDemand(id, demandGateway);
         return ResponseEntity.ok().body("Pedido: " + id + " finalizado com sucesso!");
     }
 
@@ -78,7 +84,8 @@ public class DemandController {
                     content = { @Content(mediaType = "application/json") })})
     public ResponseEntity<List<DemandResponse>> findAllDemands(){
         log.info("Listando todos os pedidos.");
-        return ResponseEntity.ok(demandUsecase.findAll());
+        var demandGateway = new DemandGatewayImpl(iDemandRepository);
+        return ResponseEntity.ok(demandUsecase.findAll(demandGateway));
     }
 
     @GetMapping("/demand/{id}/payment-status")
@@ -88,7 +95,8 @@ public class DemandController {
                     content = { @Content(mediaType = "application/json") })})
     public ResponseEntity<String> findDemandPaymentStatus(@PathVariable("id") Long id) {
         log.info("Verificando status de pagamento do pedido. {}", id);
-        var demand = demandUsecase.findById(id);
+        var demandGateway = new DemandGatewayImpl(iDemandRepository);
+        var demand = demandUsecase.findDemandPaymentStatus(id, demandGateway);
         return ResponseEntity.ok().body("Pedido: " + id + ", status de pagamento: " + demand.getPaymentStatus());
     }
 
@@ -100,7 +108,8 @@ public class DemandController {
     public ResponseEntity<String> handleWebhook(@RequestBody Map<String, Object> payload,
                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String signatureHeader) throws NoSuchAlgorithmException, InvalidKeyException {
         log.info("Pagando o pedido...");
-        demandUsecase.processPayment(payload, signatureHeader);
+        var demandGateway = new DemandGatewayImpl(iDemandRepository);
+        demandUsecase.processPayment(payload, signatureHeader, demandGateway);
         return ResponseEntity.ok().body("Pagamento aprovado com sucesso.");
     }
 }

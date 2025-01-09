@@ -1,7 +1,6 @@
 package br.com.fiap.fast_food.src.gateways.impl;
 
 import br.com.fiap.fast_food.src.db.models.Product;
-import br.com.fiap.fast_food.src.dtos.ProductRequest;
 import br.com.fiap.fast_food.src.enums.Category;
 import br.com.fiap.fast_food.src.gateways.IProductGateway;
 import br.com.fiap.fast_food.src.repositories.IProductRepository;

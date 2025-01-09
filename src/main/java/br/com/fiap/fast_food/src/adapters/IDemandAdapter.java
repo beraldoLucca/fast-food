@@ -14,9 +14,9 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface IDemandMapper {
+public interface IDemandAdapter {
 
-    IDemandMapper INSTANCE = Mappers.getMapper(IDemandMapper.class);
+    IDemandAdapter INSTANCE = Mappers.getMapper(IDemandAdapter.class);
 
     Demand toEntity(DemandRequest request, List<Product> products, Customer customer, Double preparationTime, DemandStatus status, PaymentStatus paymentStatus, LocalTime createdAt);
 

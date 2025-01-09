@@ -1,14 +1,14 @@
 package br.com.fiap.fast_food.src.usecases.impl;
 
 import br.com.fiap.fast_food.src.adapters.IProductAdapter;
+import br.com.fiap.fast_food.src.db.models.Product;
 import br.com.fiap.fast_food.src.dtos.ProductRequest;
 import br.com.fiap.fast_food.src.entities.ProductEntity;
+import br.com.fiap.fast_food.src.enums.Category;
+import br.com.fiap.fast_food.src.exceptions.ValidationException;
 import br.com.fiap.fast_food.src.gateways.IProductGateway;
 import br.com.fiap.fast_food.src.repositories.IProductRepository;
 import br.com.fiap.fast_food.src.usecases.IProductUsecase;
-import br.com.fiap.fast_food.src.db.models.Product;
-import br.com.fiap.fast_food.src.enums.Category;
-import br.com.fiap.fast_food.src.exceptions.ValidationException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

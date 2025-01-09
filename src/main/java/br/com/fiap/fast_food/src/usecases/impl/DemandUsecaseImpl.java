@@ -1,21 +1,21 @@
 package br.com.fiap.fast_food.src.usecases.impl;
 
+import br.com.fiap.fast_food.src.adapters.IDemandAdapter;
 import br.com.fiap.fast_food.src.adapters.IProductAdapter;
-import br.com.fiap.fast_food.src.dtos.DemandRequest;
-import br.com.fiap.fast_food.src.dtos.DemandResponse;
-import br.com.fiap.fast_food.src.adapters.IDemandMapper;
-import br.com.fiap.fast_food.src.gateways.ICustomerGateway;
-import br.com.fiap.fast_food.src.gateways.IProductGateway;
-import br.com.fiap.fast_food.src.gateways.impl.ProductGatewayImpl;
-import br.com.fiap.fast_food.src.repositories.IDemandRepository;
-import br.com.fiap.fast_food.src.usecases.ICustomerUsecase;
-import br.com.fiap.fast_food.src.usecases.IDemandUsecase;
 import br.com.fiap.fast_food.src.db.models.Customer;
 import br.com.fiap.fast_food.src.db.models.Demand;
 import br.com.fiap.fast_food.src.db.models.Product;
+import br.com.fiap.fast_food.src.dtos.DemandRequest;
+import br.com.fiap.fast_food.src.dtos.DemandResponse;
 import br.com.fiap.fast_food.src.enums.DemandStatus;
 import br.com.fiap.fast_food.src.enums.PaymentStatus;
 import br.com.fiap.fast_food.src.exceptions.ValidationException;
+import br.com.fiap.fast_food.src.gateways.ICustomerGateway;
+import br.com.fiap.fast_food.src.gateways.IDemandGateway;
+import br.com.fiap.fast_food.src.gateways.IProductGateway;
+import br.com.fiap.fast_food.src.usecases.ICustomerUsecase;
+import br.com.fiap.fast_food.src.usecases.IDemandUsecase;
+import br.com.fiap.fast_food.src.usecases.IProductUsecase;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -33,31 +33,26 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class DemandUsecaseImpl implements IDemandUsecase {
 
-    private final IDemandRepository demandRepository;
-
     private final ICustomerUsecase customerUsecase;
 
-    private final IDemandMapper demandMapper;
+    private final IDemandAdapter demandAdapter;
 
-    private final IProductAdapter productMapper;
+    private final IProductAdapter productAdapter;
 
-    private final ProductUsecaseImpl productUsecaseImpl;
+    private final IProductUsecase productUsecase;
 
     private static final String SECRET = "chave_secreta_do_webhook";
-    private final ProductGatewayImpl productGatewayImpl;
 
-    public DemandUsecaseImpl(IDemandRepository demandRepository, ICustomerUsecase customerUsecase, IDemandMapper demandMapper, IProductAdapter productMapper, ProductUsecaseImpl productUsecaseImpl, ProductGatewayImpl productGatewayImpl) {
-        this.demandRepository = demandRepository;
+    public DemandUsecaseImpl(ICustomerUsecase customerUsecase, IDemandAdapter demandAdapter, IProductAdapter productAdapter, IProductUsecase productUsecase) {
         this.customerUsecase = customerUsecase;
-        this.demandMapper = demandMapper;
-        this.productMapper = productMapper;
-        this.productUsecaseImpl = productUsecaseImpl;
-        this.productGatewayImpl = productGatewayImpl;
+        this.productUsecase = productUsecase;
+        this.demandAdapter = demandAdapter;
+        this.productAdapter = productAdapter;
     }
 
     @Override
     @Transactional
-    public void save(DemandRequest request, ICustomerGateway customerGateway, IProductGateway productGateway) {
+    public void save(DemandRequest request, ICustomerGateway customerGateway, IProductGateway productGateway, IDemandGateway demandGateway) {
         var timeRandom = ThreadLocalRandom.current().nextDouble(1.0, 15.0);
         var preparationTime = Math.round(timeRandom * 10.0) / 10.0;
         var demandStatus = DemandStatus.RECEBIDO;
@@ -66,38 +61,38 @@ public class DemandUsecaseImpl implements IDemandUsecase {
         Customer customer = setCustomer(request, customerGateway);
         validateProducts(request);
         List<Product> productList = setProducts(request, productGateway);
-        var demand = demandMapper.toEntity(request, productList, customer, preparationTime, demandStatus, paymentStatus, createdAt);
-        demandRepository.save(demand);
+        var demand = demandAdapter.toEntity(request, productList, customer, preparationTime, demandStatus, paymentStatus, createdAt);
+        demandGateway.save(demand);
     }
 
     @Override
-    public void finalizeDemand(Long id) {
-        var demand = demandRepository.findById(id);
-        if(demand.isEmpty()){
+    @Transactional
+    public void finalizeDemand(Long id, IDemandGateway gateway) {
+        var demand = gateway.findById(id);
+        if(demand == null){
             throw new ValidationException("Pedido não encontrado");
         }
-        demand.get().setStatus(DemandStatus.FINALIZADO);
-        demandRepository.save(demandMapper.updateToEntity(demand.get()));
+        demand.setStatus(DemandStatus.FINALIZADO);
+        gateway.save(demandAdapter.updateToEntity(demand));
     }
 
     @Override
-    public List<DemandResponse> findAll() {
-//        var demandList = demandRepository.findAll();
-        var demandList = demandRepository.findAllDemandsInOrder(DemandStatus.FINALIZADO, DemandStatus.PRONTO, DemandStatus.EM_PREPARACAO, DemandStatus.RECEBIDO);
-        return demandList.stream().map(demand -> DemandResponse.of(demand, productMapper.toProductResponses(demand.getProducts()))).toList();
+    public List<DemandResponse> findAll(IDemandGateway gateway) {
+        var demandList = gateway.findAllDemandsInOrder(DemandStatus.FINALIZADO, DemandStatus.PRONTO, DemandStatus.EM_PREPARACAO, DemandStatus.RECEBIDO);
+        return demandList.stream().map(demand -> DemandResponse.of(demand, productAdapter.toProductResponses(demand.getProducts()))).toList();
     }
 
     @Override
-    public Demand findById(Long id) {
-        var demand = demandRepository.findById(id);
-        if(demand.isEmpty()){
+    public Demand findDemandPaymentStatus(Long id, IDemandGateway gateway) {
+        var demand = gateway.findById(id);
+        if(demand == null){
             throw new ValidationException("Por favor, informe um id válido");
         }
-        return demand.get();
+        return demand;
     }
 
     @Override
-    public void processPayment(Map<String, Object> payload, String signatureHeader) throws NoSuchAlgorithmException, InvalidKeyException {
+    public void processPayment(Map<String, Object> payload, String signatureHeader, IDemandGateway gateway) throws NoSuchAlgorithmException, InvalidKeyException {
         validateSignature(signatureHeader, payload);
 
         String evento = (String) payload.get("event");
@@ -105,7 +100,7 @@ public class DemandUsecaseImpl implements IDemandUsecase {
 
         if ("payment_approved".equals(evento)) {
             Long demandId = (Long) data.get("order_id");
-            demandRepository.updatePaymentStatus(demandId, PaymentStatus.APROVADO);
+            gateway.updatePaymentStatus(demandId, PaymentStatus.APROVADO);
         } else if ("payment_failed".equals(evento)) {
             throw new ValidationException("Pagamento falhou");
         } else {
@@ -147,7 +142,7 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     }
 
     private List<Product> setProducts(DemandRequest request, IProductGateway productGateway) {
-        var products = productUsecaseImpl.findAllById(request.getProductsId(), productGateway);
+        var products = productUsecase.findAllById(request.getProductsId(), productGateway);
         if (products.isEmpty()) {
             throw new ValidationException("Por favor, selecione um produto válido.");
         }
