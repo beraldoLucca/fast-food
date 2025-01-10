@@ -96,13 +96,24 @@ public class DemandUsecaseImpl implements IDemandUsecase {
         Map<String, Object> data = (Map<String, Object>) payload.get("data");
 
         if ("payment_approved".equals(evento)) {
-            Long demandId = (Long) data.get("order_id");
-            gateway.updatePaymentStatus(demandId, PaymentStatus.APROVADO);
+            var demandId = data.get("order_id");
+            gateway.updatePaymentStatus(Long.valueOf(demandId.toString()), PaymentStatus.APROVADO);
         } else if ("payment_failed".equals(evento)) {
             throw new ValidationException("Pagamento falhou");
         } else {
             throw new ValidationException("Evento desconhecido: " + evento);
         }
+    }
+
+    @Override
+    public String getGeneratedSignature(Integer id) throws NoSuchAlgorithmException, InvalidKeyException {
+        Mac mac = Mac.getInstance("HmacSHA256");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET.getBytes(), "HmacSHA256");
+        mac.init(secretKeySpec);
+
+        String payload = "{event=payment_approved, data={order_id="+id+"}}";
+        byte[] computedHash = mac.doFinal(payload.getBytes());
+        return Base64.getEncoder().encodeToString(computedHash);
     }
 
     private void validateSignature(String signatureHeader, Map<String, Object> payload) throws NoSuchAlgorithmException, InvalidKeyException {

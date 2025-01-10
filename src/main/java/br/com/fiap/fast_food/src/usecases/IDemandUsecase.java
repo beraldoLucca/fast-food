@@ -23,4 +23,6 @@ public interface IDemandUsecase {
     Demand findDemandPaymentStatus(Long id, IDemandGateway gateway);
 
     void processPayment(Map<String, Object> payload, String signatureHeader, IDemandGateway gateway) throws NoSuchAlgorithmException, InvalidKeyException;
+
+    String getGeneratedSignature(Integer id) throws NoSuchAlgorithmException, InvalidKeyException;
 }
