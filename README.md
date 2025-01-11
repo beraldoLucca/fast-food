@@ -80,7 +80,7 @@ Aqui estão os endpoints da API que você pode usar para testar as funcionalidad
     "categoryId": 1,
     "price": 5.90,
     "description": "Salgado frito recheado com frango",
-    "image": "imageCoxinha.html"}
+    "image": "imageCoxinha.png"}
     - #### Resposta:
             Produto cadastrado com sucesso!
 
@@ -93,7 +93,7 @@ Aqui estão os endpoints da API que você pode usar para testar as funcionalidad
     "categoryId": 1,
     "price": 5.90,
     "description": "Salgado frito recheado com frango",
-    "image": "imageCoxinha.html"}
+    "image": "imageCoxinha.png"}
     - #### Resposta:
             Produto atualizado com sucesso!
 
@@ -109,34 +109,34 @@ Aqui estão os endpoints da API que você pode usar para testar as funcionalidad
         - exemplo: api/v1/product/category/1
     - #### Método: `GET`
     - #### Resposta:
-    [{"id": 1,
+    {"id": 1,
     "name": "Coxinha",
     "category": "LANCHE",
     "price": 5.90,
     "description": "Salgado frito recheado com frango",
-    "image": "example.html"}]
+    "image": "example.png"}
 
 -   ### Solicitar um novo pedido
     - #### URL: /api/v1/demand
     - #### Método: `POST`
     - #### Cabeçalho(no primeiro exemplo o Cliente se identificou através do CPF e no segundo não):
-- 
+- 1° exemplo -
   {"customer":  {
   "cpf":"12345678910",
   "name": "Fiap da silva",
   "email":"fiap@gmail.com"
   }, {"productsId": [1,2]},
--
+- 2° exemplo -
     {"productsId": [3,4]}
     - #### Resposta:
             Pedido solicitado com sucesso!
 
--   ### Finalizar um produto/checkout
+-   ### Finalizar um produto/Fake checkout
     - #### URL: /api/v1/demand/{id}
         - exemplo: api/v1/demand/1
     - #### Método: `PUT`
     - #### Resposta:
-            Pedido finalizado com sucesso!
+            Pedido: 1 finalizado com sucesso!
 
 -   ### Listar todos os pedidos
     - #### URL: /api/v1/demands
@@ -165,6 +165,34 @@ Aqui estão os endpoints da API que você pode usar para testar as funcionalidad
   "time": 15.0,
   "status": "RECEBIDO"
   }]
+
+-   ### Consultar status de pagamento de um pedido
+    - #### URL: /api/v1/demand/{id}/payment-status
+        - exemplo: api/v1/demand/1/payment-status
+    - #### Método: `GET`
+    - #### Resposta:
+            Pedido: 5, status de pagamento: EM_ANDAMENTO
+
+-   ### Gerar assinatura para pagamento webhook
+    - #### URL: /api/v1/demand/{id}/generate-signature
+        - exemplo: api/v1/demand/1/generate-signature
+    - #### Método: `GET`
+    - #### Resposta:
+            Assinatura gerada: JF2OYRyhq3plXxFG9Xlmk+HETDcycrSBpy/7nSAu0Ws=
+
+  -   ### Webhook para confirmar pagamento do pedido
+      - #### URL: /api/v1/demand/webhook/payment
+      - #### Método: `POST`
+      No headers, no campo Authorization, é necessário colocar a assinatura gerada no método anterior: JF2OYRyhq3plXxFG9Xlmk+HETDcycrSBpy/7nSAu0Ws=
+  - Payload:
+      {
+         "event": "payment_approved",
+         "data": {
+            "order_id": 1
+         }
+      }
+    - #### Resposta:
+              Pagamento aprovado com sucesso.
 
 
 ## Autores e Reconhecimentos

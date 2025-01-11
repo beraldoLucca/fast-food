@@ -100,6 +100,17 @@ public class DemandController {
         return ResponseEntity.ok().body("Pedido: " + id + ", status de pagamento: " + demand.getPaymentStatus());
     }
 
+    @GetMapping("/demand/{id}/generate-signature")
+    @Operation(summary = "Geração do hash da assinatura")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Assinatura gerada com sucesso",
+                    content = { @Content(mediaType = "application/json") })})
+    public ResponseEntity<String> generateSignature(@PathVariable Integer id) throws NoSuchAlgorithmException, InvalidKeyException {
+        log.info("Gerando a assinatura...");
+        var signature = demandUsecase.getGeneratedSignature(id);
+        return ResponseEntity.ok().body("Assinatura gerada: " + signature);
+    }
+
     @PostMapping("/demand/webhook/payment")
     @Operation(summary = "Webhook para confirmação de pagamento")
     @ApiResponses(value = {
@@ -111,16 +122,5 @@ public class DemandController {
         var demandGateway = new DemandGatewayImpl(iDemandRepository);
         demandUsecase.processPayment(payload, signatureHeader, demandGateway);
         return ResponseEntity.ok().body("Pagamento aprovado com sucesso.");
-    }
-
-    @GetMapping("/demand/{id}/generate-signature")
-    @Operation(summary = "Geração do hash da assinatura")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Assinatura gerada com sucesso",
-                    content = { @Content(mediaType = "application/json") })})
-    public ResponseEntity<String> generateSignature(@PathVariable Integer id) throws NoSuchAlgorithmException, InvalidKeyException {
-        log.info("Gerando a assinatura...");
-        var signature = demandUsecase.getGeneratedSignature(id);
-        return ResponseEntity.ok().body("Assinatura gerada: " + signature);
     }
 }
