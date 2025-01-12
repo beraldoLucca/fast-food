@@ -8,6 +8,9 @@ O projeto gerencia o fluxo de pedidos de uma lanchonete.
 - [Instalação](#instalação)
 - [Uso](#uso)
 - [Endpoints de Testes](#endpoints-de-testes)
+- [Infra](#infra)
+- [Novos requisitos de negócio](#novos-requisitos-de-negócio)
+- [Desenho dos requisitos de infraestrutura](#desenho-dos-requisitos-de-infraestrutura)
 - [Autores e Reconhecimentos](#autores-e-reconhecimentos)
 
 ## Descrição
@@ -194,6 +197,35 @@ Aqui estão os endpoints da API que você pode usar para testar as funcionalidad
     - #### Resposta:
               Pagamento aprovado com sucesso.
 
+
+## Infra
+
+Na parte de infraestrutura, utilizei o EKS da AWS para gerenciamento dos containers.
+Com a ultilização do helm, usei o deployment para o deploy da imagem da aplicação, que
+está hospedada no docker hub, e conexão com o banco através das variáveis de URL, user e senha.
+Utilizei o HPA para o autoscaling automático, com o minimo de 1 réplica e o máximo de 10,
+com o limite de 30% de uso de uma aplicação para que uma outra seja escalada.
+Para conectar na app, estou usando um service.
+Na parte de banco, subi um pod da imagem do banco de dados(PostgreSQL), e um service
+para acessar a imagem. Usei um arquivo de secret para gerenciar os dados sensíveis
+como a senha do banco.
+Por fim, usei um configMap para gerenciar a URL e usuário do banco.
+Para consumir a app na AWS, o usuário bate em uma ALB que chama o EKS que faz consultas
+ou persistências no banco. Isso tudo(desde o ALB até o banco) está dentro de uma VPC.
+
+
+## Novos requisitos de negócio
+
+#### Foram modificados os seguintes endpoints:
+    - Finalização do pedido: @PutMapping("/demand/{id}")
+    - Listar todos os pedidos: @GetMapping("/demands")
+#### Foram implementados os seguintes endpoints:
+    - Consultar status de pagamento: @GetMapping("/demand/{id}/payment-status")
+    - Geração do hash da assinatura: @GetMapping("/demand/{id}/generate-signature")
+    - Webhook para confirmação de pagamento: @PostMapping("/demand/webhook/payment")
+
+## Desenho dos requisitos de infraestrutura
+./images/architecture design.pdf
 
 ## Autores e Reconhecimentos
 
