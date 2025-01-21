@@ -12,6 +12,7 @@ O projeto gerencia o fluxo de pedidos de uma lanchonete.
 - [Novos requisitos de negócio](#novos-requisitos-de-negócio)
 - [Desenho dos requisitos de infraestrutura](#desenho-dos-requisitos-de-infraestrutura)
 - [Collections do Postman](#collections-do-postman)
+- [Link com vídeo demonstrativo](#link-com-vídeo-demonstrativo)
 - [Autores e Reconhecimentos](#autores-e-reconhecimentos)
 
 ## Descrição
@@ -230,6 +231,9 @@ ou persistências no banco. Isso tudo(desde o ALB até o banco) está dentro de 
 
 ## Collections do Postman
 [collections](https://github.com/beraldoLucca/fast-food/raw/main/collections/postman.zip)
+
+## Link com vídeo demonstrativo
+https://www.youtube.com/watch?v=NCTsrkCORLg
 
 ## Autores e Reconhecimentos
 
