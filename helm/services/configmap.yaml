@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: db-config
 data:
-  POSTGRES_URL: "postgres:// ELB do svc que a gente subir na AWS"
-  POSTGRES_USER: "admin"
+  POSTGRES_URL: "jdbc:postgresql://a0fe55cb1a86544ca854b183484e96bd-1243182406.us-east-1.elb.amazonaws.com:5432/postgres"
+  POSTGRES_USER: "admin_db"

@@ -227,6 +227,9 @@ ou persistências no banco. Isso tudo(desde o ALB até o banco) está dentro de 
 ## Desenho dos requisitos de infraestrutura
 [architecture design.pdf](images/architectureDesign.pdf)
 
+## Collections do Postman
+[collections](collections/postman.zip)
+
 ## Autores e Reconhecimentos
 
 Lucca Beraldo
