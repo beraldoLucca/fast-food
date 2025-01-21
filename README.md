@@ -226,7 +226,7 @@ ou persistências no banco. Isso tudo(desde o ALB até o banco) está dentro de 
     - Webhook para confirmação de pagamento: @PostMapping("/demand/webhook/payment")
 
 ## Desenho dos requisitos de infraestrutura
-[architecture design.pdf](images/architectureDesign.pdf)
+[architecture design](https://github.com/beraldoLucca/fast-food/raw/main/images/architectureDesign.pdf)
 
 ## Collections do Postman
 [collections](https://github.com/beraldoLucca/fast-food/raw/main/collections/postman.zip)
