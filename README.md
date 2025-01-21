@@ -11,6 +11,7 @@ O projeto gerencia o fluxo de pedidos de uma lanchonete.
 - [Infra](#infra)
 - [Novos requisitos de negócio](#novos-requisitos-de-negócio)
 - [Desenho dos requisitos de infraestrutura](#desenho-dos-requisitos-de-infraestrutura)
+- [Collections do Postman](#collections-do-postman)
 - [Autores e Reconhecimentos](#autores-e-reconhecimentos)
 
 ## Descrição
