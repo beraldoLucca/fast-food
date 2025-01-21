@@ -12,9 +12,9 @@ spec:
     spec:
       containers:
         - name: c-fast-food
-          image: beraldolucca/fast-food:v1
+          image: beraldolucca/fast-food:v2
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
             - name: POSTGRES_URL
               valueFrom:
@@ -31,20 +31,6 @@ spec:
                 secretKeyRef:
                   name: db-opaque
                   key: POSTGRES_PASSWORD
-          livenessProbe:
-            httpGet:
-              port: 80
-              path: /
-            periodSeconds: 30
-            failureThreshold: 3
-            initialDelaySeconds: 20
-          readinessProbe:
-            httpGet:
-              port: 80
-              path: /
-            periodSeconds: 30
-            failureThreshold: 5
-            initialDelaySeconds: 10
           resources:
             requests:
               cpu: 1m
