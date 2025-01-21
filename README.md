@@ -229,7 +229,7 @@ ou persistências no banco. Isso tudo(desde o ALB até o banco) está dentro de 
 [architecture design.pdf](images/architectureDesign.pdf)
 
 ## Collections do Postman
-[collections](https://github.com/beraldoLucca/fast-food/blob/main/collections/postman.zip)
+[collections](https://github.com/beraldoLucca/fast-food/blob/raw/main/collections/postman.zip)
 
 ## Autores e Reconhecimentos
 
