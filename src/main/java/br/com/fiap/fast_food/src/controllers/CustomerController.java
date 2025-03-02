@@ -40,6 +40,7 @@ public class CustomerController {
                     content = @Content)})
     public ResponseEntity<String> saveCustomer(@RequestBody CustomerRequest request) {
         log.info("Cadastrando novo cliente: {}", request);
+        log.info("teste");
         var customerGateway = new CustomerGatewayImpl(iCustomerRepository);
         customerUsecase.save(request, customerGateway);
         return ResponseEntity.ok("Cliente cadastrado com sucesso!");
