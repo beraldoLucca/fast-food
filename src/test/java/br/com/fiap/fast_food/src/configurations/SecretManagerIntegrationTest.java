@@ -19,6 +19,7 @@ public class SecretManagerIntegrationTest {
         String secretName = "rds-credentials";
         JSONObject secret = secretsManagerService.getSecret(secretName);
 
+        
         assertNotNull(secret, "O segredo não foi recuperado!");
         System.out.println("✅ Segredo recuperado: " + secret.toString());
     }
