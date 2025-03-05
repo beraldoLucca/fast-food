@@ -3,6 +3,7 @@ package br.com.fiap.fast_food.src.configurations.aws;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -10,6 +11,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import java.net.URI;
 
 @Configuration
+@Profile("!test")
 public class AwsSecretsManagerConfig {
 
     @Value("${aws.region}")

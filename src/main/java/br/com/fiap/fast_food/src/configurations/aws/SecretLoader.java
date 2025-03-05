@@ -4,24 +4,20 @@ import br.com.fiap.fast_food.src.exceptions.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
-@Configuration
 @Slf4j
 @RequiredArgsConstructor
+@Profile("!test")
 public class SecretLoader {
 
     private final AwsSecretsManagerService secretsManagerService;
 
-    @Value("${aws.secret-name}")
-    private String secretName;
+    private final String secretName;
 
-    @Bean
     public DataSource dataSource() {
         log.info("🔍 Buscando credenciais do banco no Secrets Manager...");
 
