@@ -19,7 +19,7 @@ jobs:
           java-version: '21'
           cache: 'maven'
           
-      - run: mvn clean verify
+      - run: mvn install
 
       - name: Generate JaCoCo Badge
         id: jacoco
