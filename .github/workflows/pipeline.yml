@@ -12,7 +12,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: mvn test
+      - name: Configure Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+          cache: 'maven'
+
+      - run: mvn install
 
       - name: Generate JaCoCo Badge
         id: jacoco
@@ -36,7 +43,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Configure Java 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '21'
@@ -58,7 +65,7 @@ jobs:
           distribution: 'adopt'
           package: '*.jar'
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode --update-snapshots verify
 
   deploy-Prod:
     runs-on: ubuntu-latest
