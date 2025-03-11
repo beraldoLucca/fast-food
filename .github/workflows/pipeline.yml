@@ -76,14 +76,14 @@
 #
 #      - name: Build and Push to ECR
 #        run: |
-#          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com
+#          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 385515961485.dkr.ecr.us-east-1.amazonaws.com
 #          docker build -t fast-food .
-#          docker tag fast-food:latest <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
-#          docker push <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
+#          docker tag fast-food:latest 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
+#          docker push 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
 #
 #      - name: Disparar Deploy no Infra Kubernetes
 #        run: |
 #          curl -X POST -H "Authorization: token ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" \
 #          -H "Accept: application/vnd.github.v3+json" \
-#          https://github.com/beraldoLucca/fast-food-infra-kubernetes/blob/main/.github/workflows/deploy.yml/dispatches \
+#          https://api.github.com/repos/beraldoLucca/fast-food-infra-kubernetes/actions/workflows/deploy.yml/dispatches \
 #          -d '{"ref":"main"}'
