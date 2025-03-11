@@ -81,7 +81,7 @@
 #          docker tag fast-food:latest 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
 #          docker push 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
 #
-#      - name: Disparar Deploy no Infra Kubernetes
+#      - name: Dispatches Deploy on Infra Kubernetes Repository
 #        run: |
 #          curl -X POST -H "Authorization: token ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" \
 #          -H "Accept: application/vnd.github.v3+json" \
