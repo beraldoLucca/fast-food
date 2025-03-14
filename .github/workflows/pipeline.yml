@@ -1,4 +1,4 @@
-name: pipeline
+﻿name: pipeline
 
 on:
   push:
@@ -11,14 +11,14 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          
+
       - name: Configure Java 21
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '21'
           cache: 'maven'
-          
+
       - run: mvn install
 
       - name: Generate JaCoCo Badge
@@ -74,7 +74,23 @@ jobs:
       name: prod
     needs: publish
     steps:
-      - name: Deploy
-        shell: bash
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Build and Push to ECR
         run: |
-          echo "Deploy PROD"
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 385515961485.dkr.ecr.us-east-1.amazonaws.com
+          docker build -t fast-food .
+          docker tag fast-food:latest 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
+          docker push 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
+
+#      - name: Dispatches Deploy on Infra Kubernetes Repository
+#        run: |
+#          curl -X POST -H "Authorization: token ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" \
+#          -H "Accept: application/vnd.github.v3+json" \
+#          https://api.github.com/repos/beraldoLucca/fast-food-infra-kubernetes/actions/workflows/deploy.yml/dispatches \
+#          -d '{"ref":"main"}'
