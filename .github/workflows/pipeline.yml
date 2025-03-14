@@ -76,6 +76,14 @@ jobs:
       name: prod
     needs: publish
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify File Structure
+        run: ls -R
+
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v2
         with:
