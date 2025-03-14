@@ -100,12 +100,23 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
 
-      - name: Build and Push to ECR
+      - name: Create ECR Repository if not exists
+        run: |
+          aws ecr describe-repositories --repository-names fast-food --region us-east-1 || \
+          aws ecr create-repository --repository-name fast-food --region us-east-1
+
+      - name: Login to AWS ECR
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 385515961485.dkr.ecr.us-east-1.amazonaws.com
-          docker build -t fast-food .
-          docker tag fast-food:latest 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
-          docker push 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
+
+      - name: Build Docker Image
+        run: docker build -t fast-food .
+
+      - name: Tag Docker Image
+        run: docker tag fast-food:latest 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
+
+      - name: Push Docker Image to ECR
+        run: docker push 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
 
 #      - name: Dispatches Deploy on Infra Kubernetes Repository
 #        run: |
