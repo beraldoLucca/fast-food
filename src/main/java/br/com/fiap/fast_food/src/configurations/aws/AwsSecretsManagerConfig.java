@@ -23,8 +23,8 @@ public class AwsSecretsManagerConfig {
     @Bean
     public SecretsManagerClient secretsManagerClient() {
         return SecretsManagerClient.builder()
-                //.region(Region.of(System.getenv("AWS_REGION")))
-                .region(Region.of(region))
+                .region(Region.of(System.getenv("us-east-1")))
+                //.region(Region.of(region))
                 .endpointOverride(URI.create(endpoint)) //só é usado por conta do teste local!!
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
