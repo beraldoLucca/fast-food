@@ -12,7 +12,7 @@ public class SecretLoaderConfig {
 
     @Bean
     public SecretLoader secretLoader(AwsSecretsManagerService secretsManagerService) {
-        String secretName = System.getenv("rds-credentials-11");
+        String secretName = System.getenv("rds-credentials-13");
         if (secretName == null || secretName.isBlank()) {
             secretName = "rds-credentials"; // Default para desenvolvimento
         }
