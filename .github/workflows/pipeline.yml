@@ -89,7 +89,7 @@ jobs:
           name: fast-food-jar
           path: target
 
-      - name: Verifying Artifacts Generated
+      - name: Verifying the Artifacts Generated
         run: ls -R target
 
       - name: Configure AWS
@@ -118,9 +118,9 @@ jobs:
       - name: Push Docker Image to ECR
         run: docker push 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
 
-      - name: Dispatches Deploy on Infra Kubernetes Repository
-        run: |
-          curl -X POST -H "Authorization: token ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/beraldoLucca/fast-food-infra-kubernetes/actions/workflows/deploy.yml/dispatches \
-          -d '{"ref":"main"}'
+      # - name: Dispatches Deploy on Infra Kubernetes Repository
+      #   run: |
+      #     curl -X POST -H "Authorization: token ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" \
+      #     -H "Accept: application/vnd.github.v3+json" \
+      #     https://api.github.com/repos/beraldoLucca/fast-food-infra-kubernetes/actions/workflows/deploy.yml/dispatches \
+      #     -d '{"ref":"main"}'
