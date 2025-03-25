@@ -35,6 +35,8 @@ public class SecretLoader {
         );
 
         log.info("✅ Conectado ao banco: {}", dbUrl);
+        log.info("✅ username: {}", secret.getString("username"));
+        log.info("✅ password: {}", secret.getString("password"));
 
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
