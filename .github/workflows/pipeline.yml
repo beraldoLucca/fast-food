@@ -107,16 +107,16 @@ jobs:
 
       - name: Login to AWS ECR
         run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 385515961485.dkr.ecr.us-east-1.amazonaws.com
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 528465521739.dkr.ecr.us-east-1.amazonaws.com
 
       - name: Build Docker Image
         run: docker build -t fast-food .
 
       - name: Tag Docker Image
-        run: docker tag fast-food:latest 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
+        run: docker tag fast-food:latest 528465521739.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
 
       - name: Push Docker Image to ECR
-        run: docker push 385515961485.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
+        run: docker push 528465521739.dkr.ecr.us-east-1.amazonaws.com/fast-food:latest
 
       - name: Dispatches Deploy on Infra Kubernetes Repository
         run: |
