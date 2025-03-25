@@ -14,7 +14,7 @@ public class SecretLoaderConfig {
     public SecretLoader secretLoader(AwsSecretsManagerService secretsManagerService) {
         String secretName = System.getenv("rds-credentials-13");
         if (secretName == null || secretName.isBlank()) {
-            secretName = "rds-credentials-14"; // Default para desenvolvimento
+            secretName = "rds-credentials-2"; // Default para desenvolvimento
         }
         return new SecretLoader(secretsManagerService, secretName);
     }
