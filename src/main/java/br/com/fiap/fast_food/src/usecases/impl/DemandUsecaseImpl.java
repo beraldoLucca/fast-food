@@ -2,6 +2,7 @@ package br.com.fiap.fast_food.src.usecases.impl;
 
 import br.com.fiap.fast_food.src.adapters.IDemandAdapter;
 import br.com.fiap.fast_food.src.adapters.IProductAdapter;
+import br.com.fiap.fast_food.src.configurations.rest.RestTemplateConfig;
 import br.com.fiap.fast_food.src.db.models.Customer;
 import br.com.fiap.fast_food.src.db.models.Demand;
 import br.com.fiap.fast_food.src.db.models.Product;
@@ -19,6 +20,7 @@ import br.com.fiap.fast_food.src.usecases.IDemandUsecase;
 import br.com.fiap.fast_food.src.usecases.IProductUsecase;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -42,13 +44,18 @@ public class DemandUsecaseImpl implements IDemandUsecase {
 
     private final IProductUsecase productUsecase;
 
+    private final RestTemplate restTemplate;
+
     private static final String SECRET = "chave_secreta_do_webhook";
 
-    public DemandUsecaseImpl(ICustomerUsecase customerUsecase, IDemandAdapter demandAdapter, IProductAdapter productAdapter, IProductUsecase productUsecase) {
+    private static final String URL_PAYMENT_SERVICE = "http://localhost:8081/payment/{evento}";
+
+    public DemandUsecaseImpl(ICustomerUsecase customerUsecase, IDemandAdapter demandAdapter, IProductAdapter productAdapter, IProductUsecase productUsecase, RestTemplate restTemplate) {
         this.customerUsecase = customerUsecase;
         this.productUsecase = productUsecase;
         this.demandAdapter = demandAdapter;
         this.productAdapter = productAdapter;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -89,20 +96,32 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     }
 
     @Override
-    public void processPayment(Map<String, Object> payload, String signatureHeader, IDemandGateway gateway) throws NoSuchAlgorithmException, InvalidKeyException {
-        validateSignature(signatureHeader, payload);
+    @Transactional
+    public void processPayment(Map<String, Object> payload, IDemandGateway gateway, Integer id) throws NoSuchAlgorithmException, InvalidKeyException {
+        var generatedSignature = getGeneratedSignature(id);
+        validateSignature(generatedSignature, payload);
 
         String evento = (String) payload.get("event");
         Map<String, Object> data = (Map<String, Object>) payload.get("data");
 
-        if ("payment_approved".equals(evento)) {
-            var demandId = data.get("order_id");
-            gateway.updatePaymentStatus(Long.valueOf(demandId.toString()), PaymentStatus.APROVADO);
-        } else if ("payment_failed".equals(evento)) {
-            throw new ValidationException("Pagamento falhou");
+        var orderPaid = restTemplate.getForObject(URL_PAYMENT_SERVICE, Boolean.class, evento);
+
+        if(Boolean.TRUE.equals(orderPaid)){
+            gateway.updatePaymentStatus(Long.valueOf(id), PaymentStatus.APROVADO);
         } else {
-            throw new ValidationException("Evento desconhecido: " + evento);
+            gateway.updatePaymentStatus(Long.valueOf(id), PaymentStatus.RECUSADO);
+            this.cancelDemand(Long.valueOf(id), gateway);
+            throw new ValidationException("Pagamento falhou");
         }
+
+//        if ("payment_approved".equals(evento)) {
+//            var demandId = data.get("order_id");
+//            gateway.updatePaymentStatus(Long.valueOf(demandId.toString()), PaymentStatus.APROVADO);
+//        } else if ("payment_failed".equals(evento)) {
+//            throw new ValidationException("Pagamento falhou");
+//        } else {
+//            throw new ValidationException("Evento desconhecido: " + evento);
+//        }
     }
 
     @Override
@@ -115,6 +134,18 @@ public class DemandUsecaseImpl implements IDemandUsecase {
         byte[] computedHash = mac.doFinal(payload.getBytes());
         return Base64.getEncoder().encodeToString(computedHash);
     }
+
+    @Override
+    @Transactional
+    public void cancelDemand(Long id, IDemandGateway gateway) {
+        var demand = gateway.findById(id);
+        if(demand == null){
+            throw new ValidationException("Pedido não encontrado");
+        }
+        demand.setStatus(DemandStatus.CANCELADO);
+        gateway.save(demand);
+    }
+
 
     private void validateSignature(String signatureHeader, Map<String, Object> payload) throws NoSuchAlgorithmException, InvalidKeyException {
         String payloadString = payload.toString();

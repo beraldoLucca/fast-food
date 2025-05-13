@@ -111,16 +111,16 @@ public class DemandController {
         return ResponseEntity.ok().body("Assinatura gerada: " + signature);
     }
 
-    @PostMapping("/demand/webhook/payment")
+    @PostMapping("/demand/{id}/webhook/payment")
     @Operation(summary = "Webhook para confirmação de pagamento")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pedido com pagamento aprovado",
                     content = { @Content(mediaType = "application/json") })})
-    public ResponseEntity<String> handleWebhook(@RequestBody Map<String, Object> payload,
-                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String signatureHeader) throws NoSuchAlgorithmException, InvalidKeyException {
+    public ResponseEntity<String> handleWebhook(@PathVariable Integer id,
+                                                @RequestBody Map<String, Object> payload) throws NoSuchAlgorithmException, InvalidKeyException {
         log.info("Pagando o pedido...");
         var demandGateway = new DemandGatewayImpl(iDemandRepository);
-        demandUsecase.processPayment(payload, signatureHeader, demandGateway);
+        demandUsecase.processPayment(payload, demandGateway, id);
         return ResponseEntity.ok().body("Pagamento aprovado com sucesso.");
     }
 }
