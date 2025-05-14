@@ -48,7 +48,7 @@ public class DemandUsecaseImpl implements IDemandUsecase {
 
     private static final String SECRET = "chave_secreta_do_webhook";
 
-    private static final String URL_PAYMENT_SERVICE = "http://localhost:8081/payment/{evento}";
+    private static final String URL_PAYMENT_SERVICE = "http://localhost:8081/payment/{event}/order/{id}";
 
     public DemandUsecaseImpl(ICustomerUsecase customerUsecase, IDemandAdapter demandAdapter, IProductAdapter productAdapter, IProductUsecase productUsecase, RestTemplate restTemplate) {
         this.customerUsecase = customerUsecase;
@@ -101,10 +101,10 @@ public class DemandUsecaseImpl implements IDemandUsecase {
         var generatedSignature = getGeneratedSignature(id);
         validateSignature(generatedSignature, payload);
 
-        String evento = (String) payload.get("event");
+        String event = (String) payload.get("event");
         Map<String, Object> data = (Map<String, Object>) payload.get("data");
 
-        var orderPaid = restTemplate.getForObject(URL_PAYMENT_SERVICE, Boolean.class, evento);
+        var orderPaid = restTemplate.getForObject(URL_PAYMENT_SERVICE, Boolean.class, event, id);
 
         if(Boolean.TRUE.equals(orderPaid)){
             gateway.updatePaymentStatus(Long.valueOf(id), PaymentStatus.APROVADO);
@@ -139,9 +139,6 @@ public class DemandUsecaseImpl implements IDemandUsecase {
     @Transactional
     public void cancelDemand(Long id, IDemandGateway gateway) {
         var demand = gateway.findById(id);
-        if(demand == null){
-            throw new ValidationException("Pedido não encontrado");
-        }
         demand.setStatus(DemandStatus.CANCELADO);
         gateway.save(demand);
     }
