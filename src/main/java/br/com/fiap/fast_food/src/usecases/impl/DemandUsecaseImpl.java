@@ -103,9 +103,9 @@ public class DemandUsecaseImpl implements IDemandUsecase {
 
         String event = (String) payload.get("event");
 
-        var orderPaid = restTemplate.getForObject(URL_PAYMENT_SERVICE, Boolean.class, event, id);
+        var demandPaid = restTemplate.getForObject(URL_PAYMENT_SERVICE, Boolean.class, event, id);
 
-        if(Boolean.TRUE.equals(orderPaid)){
+        if(Boolean.TRUE.equals(demandPaid)){
             gateway.updatePaymentStatus(Long.valueOf(id), PaymentStatus.APROVADO);
         } else {
             gateway.updatePaymentStatus(Long.valueOf(id), PaymentStatus.RECUSADO);
