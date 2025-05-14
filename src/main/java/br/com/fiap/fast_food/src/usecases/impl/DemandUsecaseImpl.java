@@ -102,7 +102,6 @@ public class DemandUsecaseImpl implements IDemandUsecase {
         validateSignature(generatedSignature, payload);
 
         String event = (String) payload.get("event");
-        Map<String, Object> data = (Map<String, Object>) payload.get("data");
 
         var orderPaid = restTemplate.getForObject(URL_PAYMENT_SERVICE, Boolean.class, event, id);
 
@@ -113,15 +112,6 @@ public class DemandUsecaseImpl implements IDemandUsecase {
             this.cancelDemand(Long.valueOf(id), gateway);
             throw new ValidationException("Pagamento falhou");
         }
-
-//        if ("payment_approved".equals(evento)) {
-//            var demandId = data.get("order_id");
-//            gateway.updatePaymentStatus(Long.valueOf(demandId.toString()), PaymentStatus.APROVADO);
-//        } else if ("payment_failed".equals(evento)) {
-//            throw new ValidationException("Pagamento falhou");
-//        } else {
-//            throw new ValidationException("Evento desconhecido: " + evento);
-//        }
     }
 
     @Override
