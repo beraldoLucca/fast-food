@@ -17,6 +17,7 @@ import br.com.fiap.fast_food.src.gateways.IDemandGateway;
 import br.com.fiap.fast_food.src.gateways.IProductGateway;
 import br.com.fiap.fast_food.src.usecases.ICustomerUsecase;
 import br.com.fiap.fast_food.src.usecases.IDemandUsecase;
+import br.com.fiap.fast_food.src.usecases.IKitchenUsecase;
 import br.com.fiap.fast_food.src.usecases.IProductUsecase;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -44,17 +45,20 @@ public class DemandUsecaseImpl implements IDemandUsecase {
 
     private final IProductUsecase productUsecase;
 
+    private final IKitchenUsecase kitchenUsecase;
+
     private final RestTemplate restTemplate;
 
     private static final String SECRET = "chave_secreta_do_webhook";
 
     private static final String URL_PAYMENT_SERVICE = "http://localhost:8081/payment/{event}/order/{id}";
 
-    public DemandUsecaseImpl(ICustomerUsecase customerUsecase, IDemandAdapter demandAdapter, IProductAdapter productAdapter, IProductUsecase productUsecase, RestTemplate restTemplate) {
+    public DemandUsecaseImpl(ICustomerUsecase customerUsecase, IDemandAdapter demandAdapter, IProductAdapter productAdapter, IProductUsecase productUsecase, IKitchenUsecase kitchenUsecase, RestTemplate restTemplate) {
         this.customerUsecase = customerUsecase;
         this.productUsecase = productUsecase;
         this.demandAdapter = demandAdapter;
         this.productAdapter = productAdapter;
+        this.kitchenUsecase = kitchenUsecase;
         this.restTemplate = restTemplate;
     }
 
@@ -103,10 +107,11 @@ public class DemandUsecaseImpl implements IDemandUsecase {
 
         String event = (String) payload.get("event");
 
-        var demandPaid = restTemplate.getForObject(URL_PAYMENT_SERVICE, Boolean.class, event, id);
+        //var demandPaid = restTemplate.getForObject(URL_PAYMENT_SERVICE, Boolean.class, event, id);
 
-        if(Boolean.TRUE.equals(demandPaid)){
+        if(true){
             gateway.updatePaymentStatus(Long.valueOf(id), PaymentStatus.APROVADO);
+            kitchenUsecase.sendDemandToKitchen(id);
         } else {
             gateway.updatePaymentStatus(Long.valueOf(id), PaymentStatus.RECUSADO);
             this.cancelDemand(Long.valueOf(id), gateway);
