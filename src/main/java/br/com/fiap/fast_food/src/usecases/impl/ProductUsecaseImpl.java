@@ -8,7 +8,6 @@ import br.com.fiap.fast_food.src.enums.Category;
 import br.com.fiap.fast_food.src.exceptions.ValidationException;
 import br.com.fiap.fast_food.src.gateways.IDemandGateway;
 import br.com.fiap.fast_food.src.gateways.IProductGateway;
-import br.com.fiap.fast_food.src.repositories.IProductRepository;
 import br.com.fiap.fast_food.src.usecases.IProductUsecase;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ public class ProductUsecaseImpl implements IProductUsecase {
 
     private final IProductAdapter productAdapter;
 
-    public ProductUsecaseImpl(IProductRepository productRepository, IProductAdapter productAdapter) {
+    public ProductUsecaseImpl(IProductAdapter productAdapter) {
         this.productAdapter = productAdapter;
     }
 
