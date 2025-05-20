@@ -4,6 +4,7 @@ public enum DemandStatus {
     RECEBIDO,
     EM_PREPARACAO,
     PRONTO,
-    FINALIZADO
+    FINALIZADO,
+    CANCELADO
 }
 

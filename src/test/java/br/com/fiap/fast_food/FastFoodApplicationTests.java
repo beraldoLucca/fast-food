@@ -18,18 +18,13 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 class FastFoodApplicationTests {
 
-//	@MockBean
-//	private AwsSecretsManagerConfig awsSecretsManagerConfig;
-//
-//	@MockBean
-//	private SecretLoaderConfig secretLoaderConfig;
-//
-//	@MockBean
-//	private AwsSecretsManagerService awsSecretsManagerService;
-
-
 	@Test
     void contextLoads() {
+	}
+
+	@Test
+	void mainMethodShouldRunWithoutExceptions() {
+		FastFoodApplication.main(new String[]{});
 	}
 
 }
