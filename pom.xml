@@ -159,6 +159,13 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/adapters/IProductAdapterImpl.class</exclude>
+								<exclude>**/adapters/IDemandAdapterImpl.class</exclude>
+								<exclude>**/adapters/ICustomerAdapterImpl.class</exclude>
+							</excludes>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

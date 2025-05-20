@@ -5,6 +5,7 @@ import br.com.fiap.fast_food.src.db.models.Demand;
 import br.com.fiap.fast_food.src.db.models.Product;
 import br.com.fiap.fast_food.src.dtos.CustomerRequest;
 import br.com.fiap.fast_food.src.dtos.DemandRequest;
+import br.com.fiap.fast_food.src.dtos.ProductRequest;
 import br.com.fiap.fast_food.src.enums.Category;
 import br.com.fiap.fast_food.src.enums.DemandStatus;
 import br.com.fiap.fast_food.src.enums.PaymentStatus;
@@ -59,5 +60,9 @@ public class Utils {
         demand1.setPreparationTime(10.0);
         demandList.add(demand1);
         return demandList;
+    }
+
+    public static ProductRequest createProductRequest(){
+        return new ProductRequest("Coca", 3, BigDecimal.valueOf(6.50), "Bebida gaseificada", "coca.jpg");
     }
 }
