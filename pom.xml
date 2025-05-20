@@ -30,7 +30,7 @@
 		<java.version>21</java.version>
 
 		<!-- SonarCloud -->
-		<sonar.projectKey>beraldoLucca</sonar.projectKey>
+		<sonar.projectKey>beraldoLucca_fast-food</sonar.projectKey>
 		<sonar.organization>beraldolucca</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
