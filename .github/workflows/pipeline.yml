@@ -37,6 +37,11 @@ jobs:
           name: jacoco-report
           path: target/site/jacoco/
 
+      - name: Run SonarCloud Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn verify sonar:sonar
+
   build:
     runs-on: ubuntu-latest
     needs: unit-test
