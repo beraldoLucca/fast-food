@@ -64,6 +64,20 @@ jobs:
           name: fast-food-jar
           path: target/*.jar
 
+      - name: Dispatches Deploy on Payment Repository
+        run: |
+          curl -X POST -H "Authorization: token ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/beraldoLucca/fast-food-payment/actions/workflows/pipeline.yml/dispatches \
+          -d '{"ref":"main"}'
+
+      - name: Dispatches Deploy on Kitchen Repository
+        run: |
+          curl -X POST -H "Authorization: token ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/beraldoLucca/fast-food-kitchen/actions/workflows/pipeline.yml/dispatches \
+          -d '{"ref":"main"}'
+
 #  publish:
 #    runs-on: ubuntu-latest
 #    needs: build
