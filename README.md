@@ -14,6 +14,7 @@ O projeto gerencia o fluxo de pedidos de uma lanchonete.
 - [Collections do Postman](#collections-do-postman)
 - [Link com vídeo demonstrativo](#link-com-vídeo-demonstrativo)
 - [Autores e Reconhecimentos](#autores-e-reconhecimentos)
+- [Evidência da cobertura](#evidência-da-cobertura)
 
 ## Descrição
 
@@ -234,6 +235,9 @@ ou persistências no banco. Isso tudo(desde o ALB até o banco) está dentro de 
 
 ## Link com vídeo demonstrativo
 https://www.youtube.com/watch?v=NCTsrkCORLg
+
+## Evidência da cobertura
+![Cobertura](images/fast-food-sonar-coverage.png)
 
 ## Autores e Reconhecimentos
 
